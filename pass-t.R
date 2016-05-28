@@ -1,0 +1,296 @@
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# This function will simulate human time and frequency processing with an
+# artifical neural network based on competitive learning as described in
+# Titz J. (2014). Ein aufmerksamkeitszentrierter Zugang zur H?ufigkeits-
+# und Zeitsch?tzung mittels eines kompetitiv lernenden k?nstlichen
+# neuronalen Netzes. Masterarbeit. TU Chemnitz.
+
+SimPass <- function(pres.rate, pres.time, pulses.per.second=1, attention="low", learning.weight, sd.attention=0, alpha=3, beta=10, overlap=0, random.bits=0, gamma=.15){}
+
+SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
+                          runs=100, nOutputUnits=round(ncol(inputMatrix)/2),
+                          pulsesPerSecond=1,
+                          attentionFunction=rep("constant", length(presTime)),
+                          interfUpdating=0, attentionA=3, attentionB=10,
+                          AttentionC=.15, interfPres=0){
+  # Simulates human frequency and time estimation with a competitive learning
+  # network based on the PASS-family (Sedlmeier, 1999; 2002; Burkhardt, 2013;
+  # Titz, 2014)
+  #
+  # Args:
+  #   inputMatrix: matrix with input patterns that will be presented to the
+  #                neural network, the row is one pattern
+  #   learningWeight: determines how fast the neural network will learn, value
+  #                   must be between 0-1, values too low and too high will
+  #                   disable learning
+  #   presRate: presentation rates for the patterns in the matrix
+  #   presTime: presentation times for the patterns in the matrix
+  #   runs: number of simulations to be run
+  #   nOutputUnits: number of output units in the neural network
+  #   pulsesPerSecond: determines how many time pulses one second has
+  #   attentionFunction: determines how attention changes during presentation
+  #                      of one stimulus
+  #   interfUpdating: interference when updating winner-weights from normal
+  #                   distribution with mean=0, sd=interfUpdating
+  #   attentionA: determines attentionFunction
+  #   attentionB: determines attentionFunction
+  #   attentionC: determines attentionFunction
+  #   interfPres: percent of stimuli that will be changed to a random pattern;
+  #               the lower the attention the higher the probability that this
+  #               will happen for a stimulus
+  #
+  # Returns:
+  #   list with following values for the number of simulations specified above
+  #   outputStrength: the sum of the activation strengths of the output units
+  #                   for the input patterns
+  #   sd: the standard deviation between output-units for every pattern
+  #   weightMatrix: final weightMatrix
+  #   presentationMatrix: input matrix
+
+  outputStrength <- NULL
+  outputVar <- NULL
+
+  for (j in 1:runs) {
+    nInputUnits <- ncol(inputMatrix)
+    weightMatrix <- InitializeWeightMatrix(nInputUnits, nOutputUnits)
+    pres <- MakePresMatrix(inputMatrix, learningWeight, presRate, presTime,
+                           pulsesPerSecond=pulsesPerSecond,
+                           attentionFunction=attentionFunction,
+                           attentionA=attentionA,
+                           attentionB=attentionB, AttentionC=AttentionC)
+    if (interfPres>0) {
+      nInterfPres <- round(interfPres*nrow(pres$input))
+      interfPresRows <- sample(1:nrow(pres$input), nInterfPres,
+                               prob = pres$learningWeight)
+      for (i in 1:nInterfPres) {
+        interfPresCol <- sample(c(1, 0), nInputUnits, replace = T)
+        pres$input[interfPresRows[i]] <- interPresCol
+      }
+    }
+
+    # present input i and update weights
+    for (i in 1:nrow(pres$input)) {
+      weightMatrix <- UpdateWinnerWeights(pres$input[i, ], weightMatrix,
+                                          pres$learningWeight[i],
+                                          interfUpdating)
+    }
+
+    # output for simulation j
+    outputStrength <- rbind(outputStrength, OutputActivation(inputMatrix,
+                                                             weightMatrix))
+    outputVar <- rbind(outputVar, OutputVar(inputMatrix, weightMatrix))
+  }
+  finalList <- list("output"=outputStrength, "outputSd"=outputVar,
+                    "weightMatrix"=weightMatrix,
+                    "presentationMatrix"=pres)
+  return(finalList)
+}
+
+MakePresMatrix <- function(inputMatrix, learningWeight, presRate, presTime,
+                           pulsesPerSecond, attentionFunction,
+                           attentionA, attentionB, AttentionC){
+  # Makes a presentation matrix with learning weights for the function
+  # SimulatePassT
+  #
+  # Args:
+  #   inputMatrix: matrix with input patterns that will be presented to
+  #                the neural network, the row is one pattern
+  #   learningWeight: determines how fast the neural network will learn, value
+  #                   must be between 0-1, values too low and too high will
+  #                   disable learning
+  #   presRate: presentation rates for the patterns in the matrix
+  #   presTime: presentation times for the patterns in the matrix
+  #   pulsesPerSecond: determines how many time pulses one second has
+  #   attentionFunction: determines how attention changes during presentation
+  #                      of one stimulus
+  #   attentionA: determines attentionFunction
+  #   attentionB: determines attentionFunction
+  #   attentionC: determines attentionFunction
+  #
+  # Returns:
+  #   list with two lists: the presentation matrix and the learning weights
+  #   (both in one random order)
+
+  attention <-  GetAttention(learningWeight, presTime,
+                             pulsesPerSecond=pulsesPerSecond,
+                             attentionFunction, attentionA=attentionA,
+                             attentionB=attentionB, AttentionC=AttentionC)
+  presList <- list()
+  finalList <- list()
+  finalResult <- list()
+  # produce list (stimuli) of lists (presentation time) of smallest entity
+  # (pulses*time)
+  for (i in 1:nrow(inputMatrix)) {
+    presTimePulse <- presTime[i]*pulsesPerSecond
+    presList[[i]] <- list(cbind(matrix(rep(inputMatrix[i, ], presTimePulse),
+                                       nrow=presTimePulse, byrow=T),
+                                attention[[i]]))
+    presList[[i]] <- lapply(presList[i], rep, presRate[i])
+  }
+  # unlist so that all presentations remain lists, apply unlist two times
+  presList <- unlist(presList, recursive=F)
+  presList <- unlist(presList, recursive=F)
+
+  # randomize presentations
+  randomIndex <- sample(1:length(presList), length(presList))
+  presList <- presList[randomIndex]
+
+  # dataFrame
+  presDf <- do.call(rbind, presList)
+
+  # produce result
+  finalResult[["input"]] <- presDf[, 1:(ncol(presDf)-1)]
+  finalResult[["learningWeight"]] <- presDf[, ncol(presDf)]
+  return(finalResult)
+}
+
+
+InitializeWeightMatrix <- function(nInputUnits, nOutputUnits){
+  # Initializes a weight matrix for a competitive learning network algorithm
+  #
+  # Args:
+  #   nInputUnits: number of input units in the net
+  #   nOutputUnits: number of output units in the net
+  #
+  # Returns:
+  #   matrix with nInputUnits rows and nOutputUnit columns, the sum of every
+  #   column is 1
+
+  nWeights <- nOutputUnits*nInputUnits
+  # initialize random weight matrix
+  weightMatrix <- matrix(runif(nWeights, 0, 1), nOutputUnits, byrow=T)
+  # weights for every output unit (row sum) must equal 1
+  weightMatrix <- prop.table(weightMatrix, margin=1)
+  return(weightMatrix)
+}
+
+UpdateWinnerWeights <- function(input, weightMatrix, learningWeight,
+                                interfUpdating=0){
+  # Updates weights for competitive learning network algorithm
+  #
+  # Args:
+  #   input: input vector
+  #   weightMatrix: weight matrix of network
+  #   learningWeight: learning weight for algorithm
+  #   interfUpdating: sd for a normal distribution with mean = 0, used for
+  #   interference
+  #
+  # Returns:
+  #   new weight matrix for step t+1
+
+  output <- weightMatrix%*%input
+  winner <- which(output==max(output))
+  if (length(winner)>1) {
+    print ("more than one winner, random selection")
+    mysample <- sample(1:length(winner))
+    winner <- winner[mysample]
+  }
+
+  # update winner row
+  # interfere with updating, interference from normal distribution with mean=0
+  # and sd=interfUpdating
+  # learning rule for competitive learning: Rummelhart & Zipser (1986)
+  if (interfUpdating>0) {
+    deltaW <- learningWeight*(input/sum(input)-weightMatrix[winner,]+
+                                rnorm(length(input), 0, interfUpdating))
+    weightMatrix[winner,] <- weightMatrix[winner,]+deltaW
+    weightMatrix[winner,] <- propTable(weightMatrix[winner,]+
+                                         max(c(0, -min(weightMatrix[winner,]))))
+  } else {
+    deltaW <- learningWeight*(input/sum(input)-weightMatrix[winner,])
+    weightMatrix[winner,] <- weightMatrix[winner,]+deltaW
+  }
+  return(weightMatrix)
+}
+
+OutputVar <- function(inputs, weightMatrix){
+    # calculates variance in output unit activation for one or several input
+    # patterns
+    #
+    # Args:
+    #   input: input vector or input matrix
+    #   weightMatrix: weight matrix of network
+    #
+    # Returns:
+    #   variance in output unit activation
+
+  if (class(inputs)=="matrix") {
+    return(apply(apply(inputs, 1, function(x) weightMatrix%*%x), 2, var))
+  }
+  if (is.vector(inputs)==T) {
+    return(var(weightMatrix%*%inputs))
+  }
+}
+
+OutputActivation <- function(inputs, weightMatrix){
+  # calculates sum of activation in output units for one or several input
+  # patterns
+  #
+  # Args:
+  #   input: input vector or input matrix
+  #   weightMatrix: weight matrix of network
+  #
+  # Returns:
+  #   activation in output units
+
+  if (class(inputs)=="matrix") {
+    return(colSums(apply(inputs, 1, function(x) weightMatrix%*%x)))
+  }
+  if (is.vector(inputs)==T) {
+    return(sum(weightMatrix%*%inputs))
+  }
+}
+
+
+GetAttention <- function(learningWeight, presTime, pulsesPerSecond,
+                         attention=rep("constant", length(presTime)),
+                         attentionA=10, attentionB=2, AttentionC=.15){
+  # gives learning weight from an attention function
+  #
+  # Args:
+  #
+  #   attention: specifies how attention should evolve over time
+  #   attentionA: modifies high attention function
+  #   attentionB: modifies high attention function
+  #   AttentionC: percent value that attention sinks to after first time step
+  #
+  # Returns:
+  #   attention for every time pulse
+
+  duration <- presTime*pulsesPerSecond
+  y <- list()
+  x <- lapply(duration, function(x) seq(0, x-1))
+
+  for (i in 1:length(presTime)) {
+    switch(attention[i],
+           high={
+             y[[i]] <- c(learningWeight,
+                         learningWeight*(exp(-attentionA*(x[[i]])+attentionB)/
+                                           (1+exp(-attentionA*(x[[i]])+
+                                                     attentionB)))[-1])
+           },
+           low={
+             y[[i]] <- c(learningWeight*(exp(-1.3*(x[[i]]))))
+           },
+           max={
+             y[[i]] <- rep(learningWeight, length(x[[i]]))
+           },
+           min={
+             y[[i]] <- c(learningWeight, rep(0, length(x[[i]])-1))
+           },
+           constant={
+             y[[i]] <- c(learningWeight, rep(learningWeight*AttentionC,
+                                             length(x[[i]])-1))
+           })
+  }
+  return(y)
+}
