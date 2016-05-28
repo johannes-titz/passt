@@ -1,21 +1,3 @@
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# This function will simulate human time and frequency processing with an
-# artifical neural network based on competitive learning as described in
-# Titz J. (2014). Ein aufmerksamkeitszentrierter Zugang zur H?ufigkeits-
-# und Zeitsch?tzung mittels eines kompetitiv lernenden k?nstlichen
-# neuronalen Netzes. Masterarbeit. TU Chemnitz.
-
-SimPass <- function(pres.rate, pres.time, pulses.per.second=1, attention="low", learning.weight, sd.attention=0, alpha=3, beta=10, overlap=0, random.bits=0, gamma=.15){}
-
 SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
                           runs=100, nOutputUnits=round(ncol(inputMatrix)/2),
                           pulsesPerSecond=1,
@@ -203,7 +185,7 @@ UpdateWinnerWeights <- function(input, weightMatrix, learningWeight,
     deltaW <- learningWeight*(input/sum(input)-weightMatrix[winner,]+
                                 rnorm(length(input), 0, interfUpdating))
     weightMatrix[winner,] <- weightMatrix[winner,]+deltaW
-    weightMatrix[winner,] <- propTable(weightMatrix[winner,]+
+    weightMatrix[winner,] <- prop.table(weightMatrix[winner,]+
                                          max(c(0, -min(weightMatrix[winner,]))))
   } else {
     deltaW <- learningWeight*(input/sum(input)-weightMatrix[winner,])
