@@ -3,7 +3,7 @@ SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
                           pulsesPerSecond=1,
                           attentionFunction=rep("constant", length(presTime)),
                           interfUpdating=0, attentionA=3, attentionB=10,
-                          AttentionC=.15, interfPres=0){
+                          attentionC=.15, interfPres=0){
   # Simulates human frequency and time estimation with a competitive learning
   # network based on the PASS-family (Sedlmeier, 1999; 2002; Burkhardt, 2013;
   # Titz, 2014)
@@ -48,7 +48,7 @@ SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
                            pulsesPerSecond=pulsesPerSecond,
                            attentionFunction=attentionFunction,
                            attentionA=attentionA,
-                           attentionB=attentionB, AttentionC=AttentionC)
+                           attentionB=attentionB, attentionC=attentionC)
     if (interfPres>0) {
       nInterfPres <- round(interfPres*nrow(pres$input))
       interfPresRows <- sample(1:nrow(pres$input), nInterfPres,
@@ -79,7 +79,7 @@ SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
 
 MakePresMatrix <- function(inputMatrix, learningWeight, presRate, presTime,
                            pulsesPerSecond, attentionFunction,
-                           attentionA, attentionB, AttentionC){
+                           attentionA, attentionB, attentionC){
   # Makes a presentation matrix with learning weights for the function
   # SimulatePassT
   #
@@ -105,7 +105,7 @@ MakePresMatrix <- function(inputMatrix, learningWeight, presRate, presTime,
   attention <-  GetAttention(learningWeight, presTime,
                              pulsesPerSecond=pulsesPerSecond,
                              attentionFunction, attentionA=attentionA,
-                             attentionB=attentionB, AttentionC=AttentionC)
+                             attentionB=attentionB, attentionC=attentionC)
   presList <- list()
   finalList <- list()
   finalResult <- list()
@@ -235,7 +235,7 @@ OutputActivation <- function(inputs, weightMatrix){
 
 GetAttention <- function(learningWeight, presTime, pulsesPerSecond,
                          attention=rep("constant", length(presTime)),
-                         attentionA=10, attentionB=2, AttentionC=.15){
+                         attentionA=10, attentionB=2, attentionC=.15){
   # gives learning weight from an attention function
   #
   # Args:
@@ -243,7 +243,7 @@ GetAttention <- function(learningWeight, presTime, pulsesPerSecond,
   #   attention: specifies how attention should evolve over time
   #   attentionA: modifies high attention function
   #   attentionB: modifies high attention function
-  #   AttentionC: percent value that attention sinks to after first time step
+  #   attentionC: percent value that attention sinks to after first time step
   #
   # Returns:
   #   attention for every time pulse
@@ -270,7 +270,7 @@ GetAttention <- function(learningWeight, presTime, pulsesPerSecond,
              y[[i]] <- c(learningWeight, rep(0, length(x[[i]])-1))
            },
            constant={
-             y[[i]] <- c(learningWeight, rep(learningWeight*AttentionC,
+             y[[i]] <- c(learningWeight, rep(learningWeight*attentionC,
                                              length(x[[i]])-1))
            })
   }
