@@ -3,7 +3,8 @@ SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
                           pulsesPerSecond=1,
                           attentionFunction=rep("constant", length(presTime)),
                           interfUpdating=0, attentionA=3, attentionB=10,
-                          attentionC=.15, interfPres=0){
+                          attentionC=.15, interfPres=0,
+                          random_order = T){
   # Simulates human frequency and time estimation with a competitive learning
   # network based on the PASS-family (Sedlmeier, 1999; 2002; Burkhardt, 2013;
   # Titz, 2014)
@@ -48,7 +49,8 @@ SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
                            pulsesPerSecond=pulsesPerSecond,
                            attentionFunction=attentionFunction,
                            attentionA=attentionA,
-                           attentionB=attentionB, attentionC=attentionC)
+                           attentionB=attentionB, attentionC=attentionC,
+                           random_order = random_order)
     if (interfPres>0) {
       nInterfPres <- round(interfPres*nrow(pres$input))
       interfPresRows <- sample(1:nrow(pres$input), nInterfPres,
@@ -79,7 +81,8 @@ SimulatePassT <- function(inputMatrix, learningWeight, presRate, presTime,
 
 MakePresMatrix <- function(inputMatrix, learningWeight, presRate, presTime,
                            pulsesPerSecond, attentionFunction,
-                           attentionA, attentionB, attentionC){
+                           attentionA, attentionB, attentionC,
+                           random_order = T){
   # Makes a presentation matrix with learning weights for the function
   # SimulatePassT
   #
@@ -123,7 +126,11 @@ MakePresMatrix <- function(inputMatrix, learningWeight, presRate, presTime,
   presList <- unlist(presList, recursive=F)
 
   # randomize presentations
-  randomIndex <- sample(1:length(presList), length(presList))
+  if (random_order) {
+    randomIndex <- sample(1:length(presList), length(presList))
+  } else {
+    randomIndex <- 1:length(presList)
+  }
   presList <- presList[randomIndex]
 
   # dataFrame
@@ -149,7 +156,8 @@ InitializeWeightMatrix <- function(nInputUnits, nOutputUnits){
 
   nWeights <- nOutputUnits*nInputUnits
   # initialize random weight matrix
-  weightMatrix <- matrix(runif(nWeights, 0, 1), nOutputUnits, byrow=T)
+  #weightMatrix <- matrix(runif(nWeights, 0, 1), nOutputUnits, byrow=T)
+  weightMatrix <- matrix(rnorm(nWeights, 0.5, 0.1), nOutputUnits, byrow=T)
   # weights for every output unit (row sum) must equal 1
   weightMatrix <- prop.table(weightMatrix, margin=1)
   return(weightMatrix)
