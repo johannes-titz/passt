@@ -181,7 +181,7 @@ UpdateWinnerWeights <- function(input, weightMatrix, learningWeight,
   winner <- which(output==max(output))
   if (length(winner)>1) {
     print ("more than one winner, random selection")
-    mysample <- sample(1:length(winner))
+    mysample <- sample(1:length(winner), 1)
     winner <- winner[mysample]
   }
 
