@@ -156,7 +156,7 @@ InitializeWeightMatrix <- function(n_input_units, n_output_units){
 
   nWeights <- n_output_units * n_input_units
   # initialize random weight matrix
-  weightMatrix <- matrix(rnorm(nWeights, 0.5, 0.1), n_output_units, byrow = T)
+  weightMatrix <- matrix(rnorm(nWeights, 0.5, 0.005), n_output_units, byrow = T)
   # weights for every output unit (row sum) must equal 1
   weightMatrix <- prop.table(weightMatrix, margin = 1)
   return(weightMatrix)
