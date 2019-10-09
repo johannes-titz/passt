@@ -214,18 +214,3 @@ do_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
               d_dv = cor(iv_d, dv_activation))
   r_contrast
 }
-
-#' runs several experiments via the function do_exp
-#' @inheritParams do_exp
-#' @inheritParams run_sim
-#' @number_of_exps number of experiments to run
-do_exps <- function(number_of_exps, duration, frequency, lrate_onset,
-                    lrate_drop_time, lrate_drop_perc, number_of_participants,
-                    cor_noise_sd){
-  conts <- NULL
-  for (i in seq(number_of_exps)){
-    conts[[i]] <- do_exp(duration, frequency, lrate_onset, lrate_drop_time,
-                         lrate_drop_perc, number_of_participants, cor_noise_sd)
-  }
-  plyr::ldply(conts, "data.frame")
-}
