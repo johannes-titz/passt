@@ -30,7 +30,7 @@ run_sim <- function(patterns, frequency, duration, lrate_onset, lrate_drop_time,
     weight_matrix <- init_weight_mtrx(n_input_units, n_output_units)
     pres <- create_pres_matrix(patterns, frequency, duration, lrate_onset,
                                lrate_drop_time, lrate_drop_perc,
-                               pulses_per_second=pulses_per_second,
+                               pulses_per_second = pulses_per_second,
                                random_order = random_order)
     # present input i and update weights
     for (i in 1:nrow(pres$input)) {
@@ -41,10 +41,10 @@ run_sim <- function(patterns, frequency, duration, lrate_onset, lrate_drop_time,
     output_activation_sum <- rbind(output_activation_sum,
                                    calc_output_sum(patterns, weight_matrix))
   }
-  finalList <- list("output" = output_activation_sum,
+  final_list <- list("output" = output_activation_sum,
                     "weight_matrix" = weight_matrix,
                     "pres_matrix" = pres)
-  return(finalList)
+  return(final_list)
 }
 
 #' Create presentation matrix
@@ -57,37 +57,35 @@ create_pres_matrix <- function(patterns, frequency, duration, lrate_onset,
                                pulses_per_second, random_order = TRUE){
   attention <-  get_attention(duration, lrate_onset, lrate_drop_time,
                               lrate_drop_perc, pulses_per_second)
-  presList <- list()
-  finalList <- list()
-  finalResult <- list()
+  pres_list <- list()
+  final_result <- list()
   # produce list (stimuli) of lists (presentation time) of smallest entity
-  # (pulses * time)
   for (i in 1:nrow(patterns)) {
-    durationPulse <- duration[i]*pulses_per_second
-    presList[[i]] <- list(cbind(matrix(rep(patterns[i, ], durationPulse),
-                                       nrow=durationPulse, byrow=TRUE),
+    duration_pulse <- duration[i] * pulses_per_second
+    pres_list[[i]] <- list(cbind(matrix(rep(patterns[i, ], duration_pulse),
+                                       nrow = duration_pulse, byrow = TRUE),
                                 attention[[i]]))
-    presList[[i]] <- lapply(presList[i], rep, frequency[i])
+    pres_list[[i]] <- lapply(pres_list[i], rep, frequency[i])
   }
   # unlist so that all presentations remain lists, apply unlist two times
-  presList <- unlist(presList, recursive = F)
-  presList <- unlist(presList, recursive = F)
+  pres_list <- unlist(pres_list, recursive = F)
+  pres_list <- unlist(pres_list, recursive = F)
 
   # randomize presentations
   if (random_order) {
-    randomIndex <- sample(1:length(presList), length(presList))
+    random_index <- sample(1:length(pres_list), length(pres_list))
   } else {
-    randomIndex <- 1:length(presList)
+    random_index <- 1:length(pres_list)
   }
-  presList <- presList[randomIndex]
+  pres_list <- pres_list[random_index]
 
   # create df
-  presDf <- do.call(rbind, presList)
+  pres_df <- do.call(rbind, pres_list)
 
   # split into two lists
-  finalResult[["input"]] <- presDf[, 1:(ncol(presDf)-1)]
-  finalResult[["lrate"]] <- presDf[, ncol(presDf)]
-  return(finalResult)
+  final_result[["input"]] <- pres_df[, 1:(ncol(pres_df) - 1)]
+  final_result[["lrate"]] <- pres_df[, ncol(pres_df)]
+  return(final_result)
 }
 
 #' Initialize weight matrix for competitive learning network. The function draws
@@ -126,8 +124,8 @@ updt_winner_weights <- function(input, weight_matrix, lrate){
     print ("more than one winner, random selection")
     winner <- sample(winner, 1)
   }
-  deltaW <- lrate * (input / sum(input) - weight_matrix[winner, ])
-  weight_matrix[winner, ] <- weight_matrix[winner, ] + deltaW
+  delta_w <- lrate * (input / sum(input) - weight_matrix[winner, ])
+  weight_matrix[winner, ] <- weight_matrix[winner, ] + delta_w
   return(weight_matrix)
 }
 
@@ -180,11 +178,9 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #' @cor_noise_sd the amount of noise added to the final activations of the
 #'   network, set to 0 if you do not want any noise
 #' @export
+#' @importFrom magrittr "%>%
 do_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
                    lrate_drop_perc, number_of_participants, cor_noise_sd){
-  contrast_f <- frequency
-  contrast_total_t <- duration * frequency
-  pulses_per_second <- 1
   inputs <- diag(length(duration))
 
   sim_low_a <- run_sim(patterns = inputs, lrate_onset = lrate_onset,
@@ -197,19 +193,19 @@ do_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
   # create useful data structure
   d <- cbind(id = 1:nrow(strength), strength)
   # with factor_key = TRUE we can leave the ordering of the columns
-  d <- gather(d, key = "condition", value = "dv_activation", -id,
+  d <- tidyr::gather(d, key = "condition", value = "dv_activation", -id,
               factor_key = TRUE)
-  d <- arrange(d, id, condition)
+  d <- dplyr::arrange(d, id, condition)
   d <- cbind(d, iv_f = frequency, iv_d = duration,
              iv_total_d = duration * frequency)
 
   # add noise to dv
-  d <- mutate(d,
+  d <- dplyr::mutate(d,
               dv_activation = dv_activation +
                 rnorm(length(dv_activation), mean = 0, sd = cor_noise_sd))
   # calculate effect sizes
   r_contrast <- d %>%
-    summarize(f_dv = cor(iv_f, dv_activation),
+    dplyr::summarize(f_dv = cor(iv_f, dv_activation),
               td_dv = cor(iv_total_d, dv_activation),
               d_dv = cor(iv_d, dv_activation))
   r_contrast
