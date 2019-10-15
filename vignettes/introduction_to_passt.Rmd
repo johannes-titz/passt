@@ -1,0 +1,166 @@
+---
+title: "A too short introduction to PASS-T with the *passt* R package"
+author: "Johannes Titz (johannes.titz at gmail.com)"
+date: "`r Sys.Date()`"
+bibliography: "My Library.bib"
+csl: apa.csl
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.height=3.5, fig.width=5)
+```
+
+The *passt* package is an R implementation of the PASS-T model, an artificial neural network designed to explain how humans make judgments of frequency and duration. The package was developed with two purposes in mind: (1) to provide a simple way to reproduce simulation results in judgments of frequency and duration as described in @Titz2019 and (2) to explore the PASS-T model by running individual simulations on your own.
+
+The general idea of the original PASS model [@Sedlmeier1999;@Sedlmeier2002a] is that information about the frequency of occurence of events is naturally incorporated in artificial neural networks. With every presentation of an object the weights of the network change in a systematic way. Thus, the network is able to deduce the frequency of occurence of events based on the final weights. Put simply, the artificial neural produces a higher activation if a stimulus was presented more frequently. 
+
+As an extension of the PASS model, PASS-T (T for time) is also able to process the presentation time of stimuli. Put simply, one can define how often and how long different objects are presented and test whether the network is able to make valid judgments of frequency and duration in retrospect. The main aim of PASS-T is to explain (1) why the relationship between exposure frequency and the judgment is usually larger than between exposure duration and the judgment and (2) how attention influences these relationships.
+
+Empirical work accompanying the PASS-T model can be found in @Titz2018. To fully understand this vignette it makes sense to also read the article on the PASS-T model [@Titz2019].
+
+# Using *passt*
+There are only two functions you will need to use from *passt*. The first one is *run_sim*, which runs several simulations with specific parameters and returns the output activation for each input pattern. The second is *run_exp* which directly produces effect sizes for each simulation run. Let us first look at *run_sim*.
+
+Since PASS-T extends the PASS model, PASS-T should be able to produce all results PASS can produce. The most simple PASS simulation corresponds with a counter: an artificial neural network sensitive only to frequency information.
+
+## A simple counter
+Let us first load the package and set a seed so that you can reproduce the exact same results:
+
+```{r}
+library(passt)
+set.seed(20191015)
+```
+
+```{r}
+sim1 <- run_sim(patterns = diag(10), frequency = 1:10, duration = rep(5, 10),
+                lrate_onset = 0.05, lrate_drop_time = 2, lrate_drop_perc = 0)
+```
+
+Some explanation is necessary: *patterns* is a matrix of input patterns that the network will process. Here we will use orthogonal stimuli to avoid any interference on the input level. The function *diag* will create an identity matrix so every input pattern has only one active unit; and this active unit will be unique for each pattern. You can also use other stimuli patterns as long as the activation for each unit is either 0 or 1. 
+
+Next, we specifiy how often the ten patterns should be shown and the duration of each presentation. The first pattern will be shown once for 5~s, the second pattern will be shown twice for 5~s each (a total duration of 10~s) and so on.
+
+Finally, we set the learning rate parameters: the initial learning rate (*lrate_onset*) is 0.05, but after 2~s (*lrate_drop_time*) it wil drop to 0 (*lrate_drop_perc*). This parameter set is crucial for a counter because only the first second is processed by the network, after which it shuts down the learning procedure.
+
+The function *run_sim* returns a list with three elements, of which *output* is the most interesting. Note that by default, 100 simulations are run (you can change this with the parameter *n_runs*). We will only look at the first couple of simulation:
+
+```{r}
+head(sim1$output)
+```
+
+The *output* gives the sum of the activity of all output units for the specific patterns for each simulation run. A row corresponds with one simulation and a column with one stimulus. Sometimes the output activation is referred to as the *memory strength* in an abstract sense. One can easily see that increasing the presentation frequency (i.e. going from the first to the tenth column) results in a higher *memory strength* (activation). Let us take the average for each frequency condition and plot them:
+
+```{r}
+plot(x = 1:10, y = colMeans(sim1$output), xlab = "Frequency [#]", ylab = "Activation",
+     pch = 19)
+```
+
+We can also calculate the correlation between frequency and the activation for each simulation run and make a histogram:
+
+```{r}
+correlations <- apply(sim1$output, 1, function(x) cor(1:10, x))
+hist(correlations)
+```
+
+Now this is clearly a result that appears unrealistic because the correlations are much too high. A simulation that better fits empirical results should contain some noise. 
+
+## A simple noisy counter
+To add noise to our simulation we can use the function *run_exp*, which will also analyze the data for us and report effect sizes:
+
+```{r warning=FALSE}
+sim2 <- passt::run_exp(patterns = diag(10), frequency = 1:10,
+                duration = rep(5, 10),
+                lrate_onset = 0.05, lrate_drop_time = 2,
+                lrate_drop_perc = 0, cor_noise_sd = 0.1)
+```
+
+The only new parameter is *cor_noise_sd* which introduces Gaussain noise in the system with the corresponding standard deviation around a mean of 0. The output is also much nicer as it gives effect sizes:
+
+```{r}
+sim2
+```
+
+*f_dv* is the correlation between frequency and the dependent variable, which is just the output activation. The effect is 0.75, which much better fits the empirical findings than the result of our first simulation. *td_dv* is the correlation between total duration ($f\times d$) and the dependent variable and *d_dv* is the correlation between single duration and the dependent variable. Since we did not vary the duration (all stimuli were presented for 5 s), frequency and total duration are prefectly correlated and thus *f_dv* and *td_dv* are identical. In a proper experiment we want duration and frequency to be orthogonal. Specifically, based on theoretical derivations [@Titz2018], frequency and total duration should be orthogonal, which we will set up in the next simulation.
+
+## Simulation with orthogonal independent variables
+Orthogonal independent variables of frequency and total duration can be taken from the study by @Betsch2010:
+
+```{r}
+duration <- c(4, 2, 1, 8, 4, 2, 12, 6, 3)
+frequency <- c(2, 4, 8, 2, 4, 8, 2, 4, 8)
+total_duration = frequency * duration
+cor(frequency, total_duration)
+```
+
+And now the simulation:
+
+```{r warning=FALSE}
+sim3 <- passt::run_exp(patterns = diag(9), frequency = frequency,
+                       duration = duration,
+                       lrate_onset = 0.05, lrate_drop_time = 2,
+                       lrate_drop_perc = 0, cor_noise_sd = 0.1)
+```
+
+Note that we only have nine stimuli in a $3\times3$ design so the number of patterns had to be adjusted. Otherwise nothing changed. Let us look at the output:
+
+```{r}
+sim3
+```
+
+And here we have a typical result in research on judgments of frequency and duration: the effect between frequency and the judgment is much larger than the effect between duration (here total duration) and the judgment [@Titz2018]. The third effect between single duration and the judgment if of no interest as single duration is not orthogonal to frequency.
+
+The reason for the strong effect of frequency is that the learning rate of the network drops down to 0 (*lrate_drop_perc*) at 2 s (*lrate_drop_time*). Intuitively this means that the simulated "participants"" only process an appearing stimulus for a short time (here 2 s) and then processing shuts down. This is the main mechanism to explain why frequency is the dominant factor in judgments of frequency and duration.
+
+But it has also been argued that under certain circumstances the learning rate does not drop down to 0. For instance, @Betsch2010 found that interesting material and special instructions led to a much a larger effect of exposure duration on judgments, which would mean that the learning rate remains above 0 after 2 s. To implement this in a simulation, we need to vary the parameter *lrate_drop_perc* which influences how much the learning rate (or attention) diminishes. Theoretically the parameter *lrate_drop_perc* is directly related to attention [@Titz2019]. In the final simulation we will try to investiagte how this parameter changes effect sizes.
+
+## Simulating the moderating role of attention
+
+```{r}
+lrate_drop_perc <- seq(0, 1, 0.04)
+sim4 <- lapply(lrate_drop_perc, function(x) 
+  run_exp(duration, frequency, 0.05, 2, x, diag(9), 30, 0.1))
+```
+
+The *lapply* function goes through each *lrate_drop_perc* value and runs a simulation. Note that we reduced the number of simulation runs to 10 to keep the computation time in check. Since we now have a list of simulations, we need to make it into  a data frame first and also add the information about the drop of the learning parameter:
+
+```{r}
+sim4 <- plyr::ldply(sim4, "data.frame")
+sim4 <- cbind(sim4, lrate_drop_perc)
+sim4
+```
+
+If the learning rate does not drop much (e.g. values close to 1), the influence of total duration (*td_dv*) on the output activation is strong, while the influence of frequency (*f_dv*) is weak. But if the learning rate drops substantially (values close to 0), the opposite is true. 
+
+Another plot might help to understand what is difficult to put in words. Since the relationship is somewhat complicated we will use the power of grammar of graphics (ggplot2):
+
+```{r fig.height=3.5, fig.width=5, warning=FALSE}
+library(ggplot2)
+ggplot(sim4, aes(f_dv, td_dv, color = lrate_drop_perc*100)) +
+  geom_point(alpha = 1) +
+  guides(color = guide_colorbar(order=1)) +
+  scale_color_gradient(name = "Learning parameter drop [%]", low = "grey90",
+                        high = "black", breaks = seq(0, 100, 25)) +
+  theme_bw() +
+
+  theme(legend.position = c(0, 1),
+        legend.justification = c(0, 1),
+        legend.direction = "horizontal",
+        legend.background = element_rect(fill=alpha('white', 0.3))) +
+  scale_x_continuous(name = "Influence of frequency",
+                     labels = c("0", ".25", ".50", ".75", "1"), limits = c(0, 1)) +
+  scale_y_continuous("Influence of duration",
+                     labels = c("0", ".25", ".50", ".75", "1"), limits = c(-0.05, 1))
+```
+
+Here we can clearly see that the effects of frequency and duration depend on how much the learning parameter drops. Intuitively we could say that if the attention of the network is high (learning parameter drop is 100%), the influence of duration is weak, while the influence of frequency is strong. But under normal experimental conditions, the assumption is that the learning parameter drops substantially [@Titz2018] and thus we usually find that the influence of frequency is very strong, but the influence of duration is weak. This is sometimes referred to as frequency primacy.
+
+This was only a very short or an even *too* short introduction to PASS-T via *passt*. If you are interested in the model, please check out our publications: @Titz2019,@Titz2018. Any feedback is very welcome, just drop me an e-mail at johannes.titz at gmail.com or file an issue at github: github/johannes-titz/passt
+
+# References

@@ -18,10 +18,13 @@
 #'   per second
 #' @param random_order whether stimuli should be presented in random
 #'   order, default is TRUE
-#' @return list with following elements: output_activation_sum: the
-#'   sum of the activation strengths of the output units for each
-#'   input pattern weight_matrix: final weight_matrix pres_matrix:
-#'   presentation matrix
+#' @return list with following elements
+#'   output_activation_sum: the sum of the activation strengths of the
+#'   output units for each input pattern
+#'   weight_matrix: final weight_matrix
+#'   pres_matrix: presentation matrix
+#' @examples
+#' run_sim(diag(10), 1:10, 10:1, 0.05, 2, 0.2)
 #' @export
 run_sim <- function(patterns, frequency, duration, lrate_onset,
                     lrate_drop_time, lrate_drop_perc, n_runs = 100,
@@ -59,7 +62,6 @@ run_sim <- function(patterns, frequency, duration, lrate_onset,
 #' @return list with two lists: the presentation matrix and the
 #'   learning weights (both in one random order if random_order =
 #'   TRUE)
-#' @export
 create_pres_matrix <- function(patterns, frequency, duration,
                                lrate_onset, lrate_drop_time,
                                lrate_drop_perc, pulses_per_second,
@@ -79,6 +81,7 @@ create_pres_matrix <- function(patterns, frequency, duration,
                                  attention[[i]]))
     pres_list[[i]] <- lapply(pres_list[i], rep, frequency[i])
   }
+
   # unlist so that all presentations remain lists, apply unlist two
   # times
   pres_list <- unlist(pres_list, recursive = F)
@@ -105,13 +108,12 @@ create_pres_matrix <- function(patterns, frequency, duration,
 #' function draws from a normal distribution and then normalizes the
 #' weights, such that the sum of weights is 1.
 #'
-#' @n_input_units: number of input units
-#' @n_output_units: number of output units
-#' @mean mean of normal distribution
-#' @sd sd of normal distribution
+#' @param n_input_units: number of input units
+#' @param n_output_units: number of output units
+#' @param mean mean of normal distribution
+#' @param sd sd of normal distribution
 #' @return mtrx with n_input_units rows and n_output_units columns,
 #'   the sum of every column is 1
-#' @export
 init_weight_mtrx <- function(n_input_units, n_output_units,
                              mean = 0.5, sd = 0.005){
   n_weights <- n_output_units * n_input_units
@@ -125,11 +127,10 @@ init_weight_mtrx <- function(n_input_units, n_output_units,
 
 #' Updates weights for competitive learning network algorithm
 #'
-#' @input: input vector
-#' @weight_matrix: weight matrix of network
-#' @lrate: learning rate
+#' @param input: input vector
+#' @param weight_matrix: weight matrix of network
+#' @param lrate: learning rate
 #' @return new weight matrix for step t + 1
-#' @export
 updt_winner_weights <- function(input, weight_matrix, lrate){
   output <- weight_matrix %*% input
   winner <- which(output == max(output))
@@ -147,7 +148,6 @@ updt_winner_weights <- function(input, weight_matrix, lrate){
 #' @inheritParams updt_winner_weights
 #'
 #' @return sum of activations of output units for input patterns
-#' @export
 calc_output_sum <- function(inputs, weight_matrix){
   if (class(inputs) == "matrix") {
     return(colSums(apply(inputs, 1, function(x) weight_matrix %*% x)))
@@ -187,17 +187,18 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #' sizes are calculated; stimuli are orthogonal
 #'
 #' @inheritParams run_sim
-#' @number_of_participants corresponds with number of simulations run
-#' @cor_noise_sd the amount of noise added to the final activations of
+#' @param number_of_participants corresponds with number of simulations run
+#' @param cor_noise_sd the amount of noise added to the final activations of
 #'   the network, set to 0 if you do not want any noise
 #' @export
-#' @importFrom magrittr "%>%
-do_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
-                   lrate_drop_perc, number_of_participants,
-                   cor_noise_sd){
+#' @importFrom magrittr "%>%"
+run_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
+                   lrate_drop_perc, patterns = diag(length(duration)),
+                   number_of_participants = 100,
+                   cor_noise_sd = 0){
   inputs <- diag(length(duration))
 
-  sim_low_a <- run_sim(patterns = inputs, lrate_onset = lrate_onset,
+  sim_low_a <- run_sim(patterns = patterns, lrate_onset = lrate_onset,
                        lrate_drop_time = 2, frequency = frequency,
                        duration = duration,
                        n_runs = number_of_participants,
