@@ -11,13 +11,11 @@
 #'   be lower than duration
 #' @param lrate_drop_perc how much the learning rate drops at
 #'   lrate_drop_time
-#' @param n_runs: number of simulations to be run, default is 100
+#' @param n_runs number of simulations to be run, default is 100
 #' @param n_output_units number of output units, defaults to number of
 #'   input units
 #' @param pulses_per_second how many time steps should be simulated
 #'   per second
-#' @param random_order whether stimuli should be presented in random
-#'   order, default is TRUE
 #' @return list with following elements
 #'   output_activation_sum: the sum of the activation strengths of the
 #'   output units for each input pattern
@@ -29,8 +27,7 @@
 run_sim <- function(patterns, frequency, duration, lrate_onset,
                     lrate_drop_time, lrate_drop_perc, n_runs = 100,
                     n_output_units = ncol(patterns),
-                    pulses_per_second = 1,
-                    random_order = TRUE){
+                    pulses_per_second = 1){
   output_activation_sum <- NULL
   for (j in 1:n_runs) {
     n_input_units <- ncol(patterns)
@@ -38,8 +35,7 @@ run_sim <- function(patterns, frequency, duration, lrate_onset,
     pres <- create_pres_matrix(patterns, frequency, duration,
                                lrate_onset, lrate_drop_time,
                                lrate_drop_perc,
-                               pulses_per_second = pulses_per_second,
-                               random_order = random_order)
+                               pulses_per_second = pulses_per_second)
     # present input i and update weights
     for (i in 1:nrow(pres$input)) {
       weight_matrix <- updt_winner_weights(pres$input[i, ],
@@ -60,12 +56,10 @@ run_sim <- function(patterns, frequency, duration, lrate_onset,
 #' Create presentation matrix
 #' @inheritParams run_sim
 #' @return list with two lists: the presentation matrix and the
-#'   learning weights (both in one random order if random_order =
-#'   TRUE)
+#'   learning weights (both in one random order)
 create_pres_matrix <- function(patterns, frequency, duration,
                                lrate_onset, lrate_drop_time,
-                               lrate_drop_perc, pulses_per_second,
-                               random_order = TRUE){
+                               lrate_drop_perc, pulses_per_second){
   attention <-  get_attention(duration, lrate_onset, lrate_drop_time,
                               lrate_drop_perc, pulses_per_second)
   pres_list <- list()
@@ -88,11 +82,8 @@ create_pres_matrix <- function(patterns, frequency, duration,
   pres_list <- unlist(pres_list, recursive = F)
 
   # randomize presentations
-  if (random_order) {
-    random_index <- sample(1:length(pres_list), length(pres_list))
-  } else {
-    random_index <- 1:length(pres_list)
-  }
+  random_index <- sample(1:length(pres_list), length(pres_list))
+
   pres_list <- pres_list[random_index]
 
   # create df
@@ -108,8 +99,8 @@ create_pres_matrix <- function(patterns, frequency, duration,
 #' function draws from a normal distribution and then normalizes the
 #' weights, such that the sum of weights is 1.
 #'
-#' @param n_input_units: number of input units
-#' @param n_output_units: number of output units
+#' @param n_input_units number of input units
+#' @param n_output_units number of output units
 #' @param mean mean of normal distribution
 #' @param sd sd of normal distribution
 #' @return mtrx with n_input_units rows and n_output_units columns,
@@ -127,9 +118,9 @@ init_weight_mtrx <- function(n_input_units, n_output_units,
 
 #' Updates weights for competitive learning network algorithm
 #'
-#' @param input: input vector
-#' @param weight_matrix: weight matrix of network
-#' @param lrate: learning rate
+#' @param input input vector
+#' @param weight_matrix weight matrix of network
+#' @param lrate learning rate
 #' @return new weight matrix for step t + 1
 updt_winner_weights <- function(input, weight_matrix, lrate){
   output <- weight_matrix %*% input
@@ -145,8 +136,9 @@ updt_winner_weights <- function(input, weight_matrix, lrate){
 
 #' Calculates sum of activation in output units for input patterns
 #'
+#' @param inputs matrix of inputs for which to calculate output
+#'   activation
 #' @inheritParams updt_winner_weights
-#'
 #' @return sum of activations of output units for input patterns
 calc_output_sum <- function(inputs, weight_matrix){
   if (class(inputs) == "matrix") {
@@ -192,6 +184,10 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #'   the network, set to 0 if you do not want any noise
 #' @export
 #' @importFrom magrittr "%>%"
+#' @importFrom dplyr arrange mutate summarize
+#' @importFrom tidyr gather
+#' @importFrom stats cor rnorm
+#' @importFrom rlang .data
 run_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
                    lrate_drop_perc, patterns = diag(length(duration)),
                    number_of_participants = 100,
@@ -203,28 +199,31 @@ run_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
                        duration = duration,
                        n_runs = number_of_participants,
                        lrate_drop_perc = lrate_drop_perc,
-                       n_output_units = length(duration),
-                       random_order = TRUE)
+                       n_output_units = length(duration))
 
   strength <- as.data.frame(sim_low_a$output)
   # create useful data structure
   d <- cbind(id = 1:nrow(strength), strength)
   # with factor_key = TRUE we can leave the ordering of the columns
   d <- tidyr::gather(d, key = "condition", value = "dv_activation",
-                     -id, factor_key = TRUE)
-  d <- dplyr::arrange(d, id, condition)
+                     -.data$id, factor_key = TRUE)
+  d <- dplyr::arrange(d, .data$id, .data$condition)
   d <- cbind(d, iv_f = frequency, iv_d = duration,
              iv_total_d = duration * frequency)
 
   # add noise to dv
   d <- dplyr::mutate(d,
-              dv_activation = dv_activation +
-                rnorm(length(dv_activation), mean = 0,
-                      sd = cor_noise_sd))
+                     dv_activation = .data$dv_activation +
+                       stats::rnorm(length(.data$dv_activation),
+                                    mean = 0,
+                                    sd = cor_noise_sd))
   # calculate effect sizes
   r_contrast <- d %>%
-    dplyr::summarize(f_dv = cor(iv_f, dv_activation),
-              td_dv = cor(iv_total_d, dv_activation),
-              d_dv = cor(iv_d, dv_activation))
+    dplyr::summarize(f_dv = stats::cor(.data$iv_f,
+                                       .data$dv_activation),
+                     td_dv = stats::cor(.data$iv_total_d,
+                                        .data$dv_activation),
+                     d_dv = stats::cor(.data$iv_d,
+                                       .data$dv_activation))
   r_contrast
 }
