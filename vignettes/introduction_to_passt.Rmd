@@ -2,7 +2,7 @@
 title: "A too short introduction to PASS-T with the *passt* R package"
 author: "Johannes Titz (johannes.titz at gmail.com)"
 date: "`r Sys.Date()`"
-bibliography: "My Library.bib"
+bibliography: "library.bib"
 csl: apa.csl
 output: 
   rmarkdown::html_vignette:
@@ -39,7 +39,7 @@ set.seed(20191015)
 ```
 
 ```{r}
-sim1 <- run_sim(patterns = diag(10), frequency = 1:10, duration = rep(5, 10),
+sim1 <- run_sim(patterns = diag(10), frequency = 1:10, duration = 10:1,
                 lrate_onset = 0.05, lrate_drop_time = 2, lrate_drop_perc = 0)
 ```
 
@@ -75,8 +75,8 @@ Now this is clearly a result that appears unrealistic because the correlations a
 To add noise to our simulation we can use the function *run_exp*, which will also analyze the data for us and report effect sizes:
 
 ```{r warning=FALSE}
-sim2 <- passt::run_exp(patterns = diag(10), frequency = 1:10,
-                duration = rep(5, 10),
+sim2 <- run_exp(patterns = diag(10), frequency = 1:10,
+                duration = 10:1,
                 lrate_onset = 0.05, lrate_drop_time = 2,
                 lrate_drop_perc = 0, cor_noise_sd = 0.1)
 ```
