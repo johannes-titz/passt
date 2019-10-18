@@ -2,4 +2,11 @@
 
 export(run_exp)
 export(run_sim)
+importFrom(dplyr,arrange)
+importFrom(dplyr,mutate)
+importFrom(dplyr,summarize)
 importFrom(magrittr,"%>%")
+importFrom(rlang,.data)
+importFrom(stats,cor)
+importFrom(stats,rnorm)
+importFrom(tidyr,gather)

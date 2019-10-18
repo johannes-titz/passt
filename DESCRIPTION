@@ -15,6 +15,8 @@ URL: https://github.com/yihui/johannes-titz
 BugReports: https://github.com/yihui/johannes-titz/issues
 Suggests: 
     knitr,
+    ggplot2,
+    plyr,
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
-Depends: magrittr
+Imports: magrittr,dplyr,tidyr,rlang
