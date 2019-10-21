@@ -1,0 +1,63 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# passt
+
+<!-- badges: start -->
+[![Build Status](https://travis-ci.org/johannes-titz/passt.svg?branch=master)](https://travis-ci.org/johannes-titz/passt)
+<!-- badges: end -->
+
+The *passt* package is an R implementation of the PASS-T model, an artificial neural network designed to explain how humans make judgments of frequency and duration.
+
+## Installation
+<!-- 
+You can install the released version of passt from [CRAN](https://CRAN.R-project.org) with:
+
+```{r}
+#install.packages("passt")
+```
+-->
+You can install the development version from [GitHub](https://github.com/) with devtools (and vignettes build, this takes a couple of seconds):
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+devtools::install_github("johannes-titz/passt", build_vignettes = TRUE)
+```
+## Example
+
+Run a simulation with 10 orthogonal stimuli presented for 1, 2, ..., 10 times and durations of 10 s, 9 s, ..., 1 s.
+
+```{r example}
+library(passt)
+sim1 <- run_sim(patterns = diag(10), frequency = 1:10, duration = 10:1,
+                lrate_onset = 0.05, lrate_drop_time = 2, lrate_drop_perc = 0)
+head(sim1$output)
+```
+
+The output is the *memory strength* for each stimulus. One row corresponds with one simulation, while one column is one stimulus pattern. You can see that stimuli presented more often (going from the first column to the last column) produce higher activations.
+
+For more details please check out the vignette:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+vignette("passt")
+```
+<!-- 
+# Citation
+
+Titz, J. (2019). passt: An R implementation of the PASS-T model. R package version 0.1.0. https://CRAN.R-project.org/package=passt
+
+A BibTex entry for LaTeX users is:
+
+@Manual{titz2019, title = {passt: an R implementation of the PASS-T model}, author = {Titz, Johannes}, year = {2019}, note = {R package version 0.1.0}, url = {https://CRAN.R-project.org/package=passt}, }
+-->
