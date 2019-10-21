@@ -183,7 +183,6 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #' @param cor_noise_sd the amount of noise added to the final activations of
 #'   the network, set to 0 if you do not want any noise
 #' @export
-#' @importFrom magrittr "%>%"
 #' @importFrom dplyr arrange mutate summarize
 #' @importFrom tidyr gather
 #' @importFrom stats cor rnorm
