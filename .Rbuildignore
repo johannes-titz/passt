@@ -4,3 +4,6 @@ test.R
 ^\.travis\.yml$
 cran-comments.md
 ^README\.Rmd$
+^doc$
+^Meta$
+^LICENSE\.md$
