@@ -8,7 +8,12 @@
 #' while you are still able to set the most important parameters such
 #' as the learning rate development, the input patterns and the
 #' independent variables of exposure frequency and exposure duration.
-#'
-#' @docType package
-#' @name passt
+#' @keywords internal
+"_PACKAGE"
+
+# The following block is used by usethis to automatically manage
+# roxygen namespace tags. Modify with care!
+## usethis namespace: start
+## usethis namespace: end
 NULL
+
