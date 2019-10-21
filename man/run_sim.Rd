@@ -2,8 +2,7 @@
 % Please edit documentation in R/passt.R
 \name{run_sim}
 \alias{run_sim}
-\title{Simulates judgments of frequency and duration with a competitive
-learning network based on the PASS-family}
+\title{Run simulations}
 \usage{
 run_sim(patterns, frequency, duration, lrate_onset, lrate_drop_time,
   lrate_drop_perc, n_runs = 100, n_output_units = ncol(patterns),
@@ -36,15 +35,20 @@ per second}
 }
 \value{
 list with following elements
-  output_activation_sum: the sum of the activation strengths of the
-  output units for each input pattern
-  weight_matrix: final weight_matrix
-  pres_matrix: presentation matrix
+\itemize{
+  \item output: the sum of the activation strengths of the
+    output units for each input pattern
+  \item weight_matrix: final weight_matrix
+  \item pres_matrix: presentation matrix
+}
 }
 \description{
-Simulates judgments of frequency and duration with a competitive
-learning network based on the PASS-family
+Runs several simulations and returns output activation for each
+simulation and each input pattern
 }
 \examples{
 run_sim(diag(10), 1:10, 10:1, 0.05, 2, 0.2)
+}
+\seealso{
+\code{\link{run_exp}}
 }

@@ -2,19 +2,17 @@
 % Please edit documentation in R/passt.R
 \name{run_exp}
 \alias{run_exp}
-\title{Runs one "experiment" with several "participants", which means that
-a simulation is run for each "participant" and correlative effect
-sizes are calculated; stimuli are orthogonal}
+\title{Run simulations and analyze data comparable to a typical experiment}
 \usage{
-run_exp(duration, frequency, lrate_onset, lrate_drop_time, lrate_drop_perc,
+run_exp(frequency, duration, lrate_onset, lrate_drop_time, lrate_drop_perc,
   patterns = diag(length(duration)), number_of_participants = 100,
   cor_noise_sd = 0)
 }
 \arguments{
-\item{duration}{presentation duration for each pattern in the
+\item{frequency}{presentation frequency for each pattern in the
 matrix}
 
-\item{frequency}{presentation frequency for each pattern in the
+\item{duration}{presentation duration for each pattern in the
 matrix}
 
 \item{lrate_onset}{learning rate at the onset of a stimulus}
@@ -27,13 +25,19 @@ lrate_drop_time}
 
 \item{patterns}{matrix with input patterns, one row is one pattern}
 
-\item{number_of_participants}{corresponds with number of simulations run}
+\item{number_of_participants}{corresponds with number of
+simulations run}
 
-\item{cor_noise_sd}{the amount of noise added to the final activations of
-the network, set to 0 if you do not want any noise}
+\item{cor_noise_sd}{the amount of noise added to the final
+activations of the network, set to 0 if you do not want any noise}
 }
 \description{
-Runs one "experiment" with several "participants", which means that
-a simulation is run for each "participant" and correlative effect
-sizes are calculated; stimuli are orthogonal
+Runs several simulations and calculates correlative effect sizes.
+Comparable to running an experiment and analyzing the data.
+}
+\examples{
+run_exp(10:1, 1:10, 0.05, 2, 0.2)
+}
+\seealso{
+\code{\link{run_sim}}
 }

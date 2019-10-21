@@ -1,5 +1,7 @@
-#' Simulates judgments of frequency and duration with a competitive
-#' learning network based on the PASS-family
+#' Run simulations
+#'
+#' Runs several simulations and returns output activation for each
+#' simulation and each input pattern
 #'
 #' @param patterns matrix with input patterns, one row is one pattern
 #' @param frequency presentation frequency for each pattern in the
@@ -17,13 +19,16 @@
 #' @param pulses_per_second how many time steps should be simulated
 #'   per second
 #' @return list with following elements
-#'   output_activation_sum: the sum of the activation strengths of the
-#'   output units for each input pattern
-#'   weight_matrix: final weight_matrix
-#'   pres_matrix: presentation matrix
+#' \itemize{
+#'   \item output: the sum of the activation strengths of the
+#'     output units for each input pattern
+#'   \item weight_matrix: final weight_matrix
+#'   \item pres_matrix: presentation matrix
+#' }
 #' @examples
 #' run_sim(diag(10), 1:10, 10:1, 0.05, 2, 0.2)
 #' @export
+#' @seealso \code{\link{run_exp}}
 run_sim <- function(patterns, frequency, duration, lrate_onset,
                     lrate_drop_time, lrate_drop_perc, n_runs = 100,
                     n_output_units = ncol(patterns),
@@ -174,9 +179,10 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
   return(y)
 }
 
-#' Runs one "experiment" with several "participants", which means that
-#' a simulation is run for each "participant" and correlative effect
-#' sizes are calculated; stimuli are orthogonal
+#' Run simulations and analyze data comparable to a typical experiment
+#'
+#' Runs several simulations and calculates correlative effect sizes.
+#' Comparable to running an experiment and analyzing the data.
 #'
 #' @inheritParams run_sim
 #' @param number_of_participants corresponds with number of
@@ -188,7 +194,10 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #' @importFrom tidyr gather
 #' @importFrom stats cor rnorm
 #' @importFrom rlang .data
-run_exp <- function(duration, frequency, lrate_onset, lrate_drop_time,
+#' @examples
+#' run_exp(10:1, 1:10, 0.05, 2, 0.2)
+#' @seealso  \code{\link{run_sim}}
+run_exp <- function(frequency, duration, lrate_onset, lrate_drop_time,
                    lrate_drop_perc, patterns = diag(length(duration)),
                    number_of_participants = 100,
                    cor_noise_sd = 0){

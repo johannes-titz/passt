@@ -16,7 +16,7 @@ duration <- c(4, 2, 1, 8, 4, 2, 12, 6, 3)
 frequency <- c(2, 4, 8, 2, 4, 8, 2, 4, 8)
 lrate_drop_perc <- seq(0, 1, 0.04)
 sim4 <- lapply(lrate_drop_perc, function(x)
-  run_exp(duration, frequency, 0.05, 2, x, diag(9), 10, 0.1))
+  run_exp(frequency, duration, 0.05, 2, x, diag(9), 10, 0.1))
 
 sim4 <- plyr::ldply(sim4, "data.frame")
 sim4 <- cbind(sim4, lrate_drop_perc)
