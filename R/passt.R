@@ -179,9 +179,10 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #' sizes are calculated; stimuli are orthogonal
 #'
 #' @inheritParams run_sim
-#' @param number_of_participants corresponds with number of simulations run
-#' @param cor_noise_sd the amount of noise added to the final activations of
-#'   the network, set to 0 if you do not want any noise
+#' @param number_of_participants corresponds with number of
+#'   simulations run
+#' @param cor_noise_sd the amount of noise added to the final
+#'   activations of the network, set to 0 if you do not want any noise
 #' @export
 #' @importFrom dplyr arrange mutate summarize
 #' @importFrom tidyr gather
