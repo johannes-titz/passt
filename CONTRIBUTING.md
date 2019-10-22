@@ -4,6 +4,6 @@ Contributions of any kind are very welcome! I will sincerely consider every sugg
 
 https://github.com/johannes-titz/passt/issues
 
-You can also drop me an e-mail and discuss suggestions at johannes at titz.science or johannes.titz at gmail.com
+You can also drop me an e-mail and discuss suggestions at: johannes at titz.science or johannes.titz at gmail.com
 
-If you want to make a pull request, please check that you can still build the package without any errors, warnings or notes. Overall, simply stick to the R packages book: https://r-pkgs.org/ and follow code style described here: http://r-pkgs.had.co.nz/r.html#style
+If you want to make a pull request, please check that you can still build the package without any errors, warnings or notes. Overall, simply stick to the R packages book: https://r-pkgs.org/ and follow the code style described here: http://r-pkgs.had.co.nz/r.html#style
