@@ -7,3 +7,8 @@ cran-comments.md
 ^doc$
 ^Meta$
 ^LICENSE\.md$
+^checklist_joss.txt$
+^paper.md$
+^CONTRIBUTING.html$
+^CONTRIBUTING.md$
+^paper.bib$
