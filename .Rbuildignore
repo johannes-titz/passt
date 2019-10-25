@@ -16,3 +16,5 @@ cran-comments.md
 ^todos.txt$
 ^apa.csl$
 ^library.bib$
+^README.md$
+^README.Rmd$
