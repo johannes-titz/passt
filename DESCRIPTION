@@ -1,6 +1,6 @@
 Package: passt
 Type: Package
-Title: Implementation of Probability ASSociator Time (PASS-T)
+Title: An Implementation of Probability Associator Time (PASS-T)
 Version: 0.1.0
 Authors@R: person("Johannes", "Titz",
                   email = "johannes.titz@gmail.com",
