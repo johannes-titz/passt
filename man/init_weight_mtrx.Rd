@@ -15,10 +15,10 @@ init_weight_mtrx(n_input_units, n_output_units, mean = 0.5, sd = 0.005)
 
 \item{mean}{mean of normal distribution}
 
-\item{sd}{sd of normal distribution}
+\item{sd}{standard deviation of normal distribution}
 }
 \value{
-mtrx with n_input_units rows and n_output_units columns,
+matrix with n_input_units rows and n_output_units columns,
   the sum of every column is 1
 }
 \description{

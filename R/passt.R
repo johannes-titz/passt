@@ -107,8 +107,8 @@ create_pres_matrix <- function(patterns, frequency, duration,
 #' @param n_input_units number of input units
 #' @param n_output_units number of output units
 #' @param mean mean of normal distribution
-#' @param sd sd of normal distribution
-#' @return mtrx with n_input_units rows and n_output_units columns,
+#' @param sd standard deviation of normal distribution
+#' @return matrix with n_input_units rows and n_output_units columns,
 #'   the sum of every column is 1
 init_weight_mtrx <- function(n_input_units, n_output_units,
                              mean = 0.5, sd = 0.005){
