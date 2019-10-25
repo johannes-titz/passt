@@ -6,3 +6,6 @@
 *.txt
 doc
 Meta
+test.R
+vignette.odt
+CONTRIBUTING.html
