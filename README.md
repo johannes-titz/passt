@@ -7,6 +7,8 @@
 
 [![Build
 Status](https://travis-ci.org/johannes-titz/passt.svg?branch=master)](https://travis-ci.org/johannes-titz/passt)
+[![Codecov test
+coverage](https://codecov.io/gh/johannes-titz/passt/branch/master/graph/badge.svg)](https://codecov.io/gh/johannes-titz/passt?branch=master)
 <!-- badges: end -->
 
 The *passt* package is an R implementation of the Probability ASSociator
@@ -274,8 +276,8 @@ memory. *Journal of Experimental Psychology*, *83*, 435–444.
 
 Hintzman, D. L., Summers, J. J., & Block, R. A. (1975). What causes the
 spacing effect? Some effects of repetition, duration, and spacing on
-memory for pictures. *Memory & Cognition*, *3*, 287–294.
-<https://doi.org/10.3758/BF03212913>
+memory for pictures. *Memory & Cognition*, *3*, 287–294. Retrieved from
+<https://link.springer.com/article/10.3758/BF03212913>
 
 </div>
 
@@ -314,7 +316,7 @@ publication.
 
 Winkler, I. (2009). *The processing of frequency and duration* (Doctoral
 dissertation, Chemnitz University of Technology). Retrieved from
-<http://monarch.qucosa.de/fileadmin/data/qucosa/documents/5813/data/Dissertation.pdf>
+<http://monarch.qucosa.de/api/qucosa%3A19139/attachment/ATT-0/>
 
 </div>
 
