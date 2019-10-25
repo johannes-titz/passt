@@ -1,5 +1,7 @@
 ---
 output: github_document
+bibliography: "library.bib"
+csl: apa.csl
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -19,7 +21,11 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/johannes-titz/passt.svg?branch=master)](https://travis-ci.org/johannes-titz/passt)
 <!-- badges: end -->
 
-The *passt* package is an R implementation of the PASS-T model, an artificial neural network designed to explain how humans make judgments of frequency and duration.
+The *passt* package is an R implementation of the Probability ASSociator Time (PASS-T) model, an artificial neural network designed to explain how humans make judgments of frequency and duration [@Titz2019]. The package was developed with two purposes in mind: (1) to provide a simple way to reproduce simulation results in judgments of frequency and duration as described in @Titz2019, and (2) to explore the PASS-T model by allowing users to run their own individual simulations. The package is targeted at cognitive psychologists who study judgments of frequency and duration, memory, heuristics and artificial neural networks.
+
+The general idea of the original PASS model [@Sedlmeier1999;@Sedlmeier2002a] is that information about the frequency of events is naturally incorporated in artificial neural networks. If an object is presented repeatedly, the weights of the network change systematically. This way, the network is able to deduce the frequency of occurrence of events based on the final weights. Put simply, the artificial neural network produces a higher activation the more often a stimulus is presented.
+
+As an extension of the PASS model, PASS-T is also able to process the presentation time of the stimuli. One can define how often and how long different objects are presented and test whether the network is able to make valid judgments of frequency and duration in retrospect. The principal aim of PASS-T is to explain empirical results that are found in studies with humans [@Titz2018]. Specifically, two empirical results are quite robust: (1) the correlation between exposure *frequency* and judgment is usually larger than between exposure *duration* and judgment (sometimes termed *frequency primacy*); and (2) the amount of attention that participants pay to the stimuli moderates effect sizes. These findings have been of some interest in cognitive psychology in the last decade [@Betsch2010;@Titz2019;@Titz2018;@Winkler2015;@Winkler2009a], although its roots go back half a century [@Hintzman1970a;@Hintzman1975;@Cooper1967] and touch upon different research areas such as memory, heuristics, and perception of magnitudes. PASS-T can be seen as a summary of some of this research, cast into a formal model. The R package *passt* is the first concrete implementation of PASS-T to make the model available to a wider audience.
 
 ## Installation
 <!-- 
@@ -34,24 +40,76 @@ You can install the development version from [GitHub](https://github.com/) with 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 devtools::install_github("johannes-titz/passt", build_vignettes = TRUE)
 ```
-## Example
 
-Run a simulation with 10 orthogonal stimuli presented for 1, 2, ..., 10 times and durations of 10 s, 9 s, ..., 1 s.
+## Using *passt*
+There are only two functions of *passt* that you will need to use. The first function is *run_sim*, which runs several simulations with specific parameters and returns the final output activation for each input pattern. The second is *run_exp*, which aggregates the data and gives effect sizes for each simulation run. Let us first look at *run_sim*.
 
-```{r example}
+Since PASS-T extends the PASS model, PASS-T should be able to produce all the results that PASS can produce. The simplest PASS simulation is a type of counter: an artificial neural network sensitive only to frequency information.
+
+### A simple counter
+```{r}
 library(passt)
+set.seed(20191015)
+```
+
+```{r}
 sim1 <- run_sim(patterns = diag(10), frequency = 1:10, duration = 10:1,
                 lrate_onset = 0.05, lrate_drop_time = 2, lrate_drop_perc = 0)
+```
+
+Some explanation is necessary: *patterns* is a matrix of input patterns that the network will process. Here we will use orthogonal stimuli to avoid any interference on the input level. The function *diag* will create an identity matrix so that every input pattern has only one active unit. This active unit will be unique for each pattern. You can also use other stimulus patterns as long as the activation for each unit is either 0 or 1.
+
+Next, we specify how often the ten patterns should be shown and the duration of each presentation. The first pattern will be shown once for 10 s, the second pattern will be shown twice for 9 s each (a total duration of 18 s), and so on. You can also use other arrangements for a simple counter.
+
+Finally, we set the learning rate parameters: the initial learning rate (*lrate_onset*) is 0.05, but after 2 s (*lrate_drop_time*) it will drop to 0 (*lrate_drop_perc*). This parameter selection is crucial for a counter because only the first two seconds of a stimulus presentation are processed by the network.
+
+The function *run_sim* returns a list with three elements, of which *output* is the most interesting. Note that, by default, 100 simulations are run (you can change this with the parameter *n_runs*). We will only look at the first couple of simulations:
+
+```{r}
 head(sim1$output)
 ```
 
-The output is the *memory strength* for each stimulus. One row corresponds with one simulation, while one column is one stimulus pattern. You can see that stimuli presented more often (going from the first column to the last column) produce higher activations.
+The *output* gives the sum of the activity of all output units for the specific patterns for each simulation run. Each row corresponds with one simulation and each column with one input pattern. Sometimes the output activation is referred to as the *memory strength* in an abstract sense. One can easily see that increasing the presentation frequency (i.e. going from the first to the tenth column) results in a higher *memory strength* (activation).
+
+### Simulating the moderating role of attention
+The PASS-T model was used to explain how attention moderates effect sizes in judgments of frequency and duration [@Titz2019]. A short example for a setup could look like this:
+
+```{r}
+duration <- c(4, 2, 1, 8, 4, 2, 12, 6, 3)
+frequency <- c(2, 4, 8, 2, 4, 8, 2, 4, 8)
+lrate_drop_perc <- seq(0, 1, 0.04)
+sim4 <- lapply(lrate_drop_perc, function(x) 
+  run_exp(frequency, duration, 0.05, 2, x, diag(9), 30, 0.1))
+```
+
+The *lapply* function goes through each *lrate_drop_perc* value and runs a simulation. Note that we reduced the number of simulation runs to 30 to keep the computation time within reasonable limits. Since we now have a list of simulations, we need to convert it into a data frame and then add the information about the drop of the learning parameter:
+
+```{r}
+sim4 <- plyr::ldply(sim4, "data.frame")
+sim4 <- cbind(sim4, lrate_drop_perc)
+sim4
+```
+
+If the learning rate does not drop much (i.e. *lrate_drop_perc* approaches 1), the influence of total duration (*td_dv*) on the output activation is strong, while the influence of frequency (*f_dv*) is weak. But if the learning rate drops substantially (i.e. *lrate_drop_perc* approaches 0), the opposite is true. 
 
 For more details please check out the vignette:
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 vignette("passt")
 ```
+
+## Issues and Support
+If you find any bugs, please use the issue tracker at:
+
+https://github.com/johannes-titz/passt/issues
+
+If you need assistance in how to use the package, drop me an e-mail at johannes at titz.science or johannes.titz at gmail.com
+
+## Contributing
+Contributions of any kind are very welcome! I will sincerely consider every suggestion on how to improve the code, the documentation and the presented examples. Even minor things, such as suggestions for better wording or improving grammer in any part of the package are considered as valuable contributions.
+
+If you want to make a pull request, please check that you can still build the package without any errors, warnings or notes. Overall, simply stick to the R packages book: https://r-pkgs.org/ and follow the code style described here: http://r-pkgs.had.co.nz/r.html#style
+
 <!-- 
 # Citation
 
@@ -61,3 +119,5 @@ A BibTex entry for LaTeX users is:
 
 @Manual{titz2019, title = {passt: an R implementation of the PASS-T model}, author = {Titz, Johannes}, year = {2019}, note = {R package version 0.1.0}, url = {https://CRAN.R-project.org/package=passt}, }
 -->
+
+## References
