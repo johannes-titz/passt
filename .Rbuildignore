@@ -19,3 +19,5 @@ cran-comments.md
 ^README.md$
 ^README.Rmd$
 ^codecov\.yml$
+^CRAN-RELEASE$
+^paper_sim.R$
