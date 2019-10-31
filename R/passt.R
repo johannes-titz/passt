@@ -131,7 +131,7 @@ updt_winner_weights <- function(input, weight_matrix, lrate){
   output <- weight_matrix %*% input
   winner <- which(output == max(output))
   if (length(winner) > 1) {
-    print ("more than one winner, random selection")
+    warning("more than one winner, random selection")
     winner <- sample(winner, 1)
   }
   delta_w <- lrate * (input / sum(input) - weight_matrix[winner, ])
