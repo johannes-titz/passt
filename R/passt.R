@@ -59,9 +59,15 @@ run_sim <- function(patterns, frequency, duration, lrate_onset,
 }
 
 #' Create presentation matrix
+#'
+#' Taking into account the exposure frequency and exposure duration of
+#' the stimuli, this function creates a randomized presentation matrix
+#' of all stimuli.
+#'
 #' @inheritParams run_sim
 #' @return list with two lists: the presentation matrix and the
 #'   learning weights (both in one random order)
+#' @noRd
 create_pres_matrix <- function(patterns, frequency, duration,
                                lrate_onset, lrate_drop_time,
                                lrate_drop_perc, pulses_per_second){
@@ -100,9 +106,11 @@ create_pres_matrix <- function(patterns, frequency, duration,
   return(final_result)
 }
 
-#' Initialize weight matrix for competitive learning network. The
-#' function draws from a normal distribution and then normalizes the
-#' weights, such that the sum of weights is 1.
+#' Initialize weight matrix for competitive learning network
+#'
+#' Draws weights from a normal distribution and then normalizes these
+#' weights, such that the sum of weights going to one output unit is
+#' 1.
 #'
 #' @param n_input_units number of input units
 #' @param n_output_units number of output units
@@ -110,6 +118,7 @@ create_pres_matrix <- function(patterns, frequency, duration,
 #' @param sd standard deviation of normal distribution
 #' @return matrix with n_input_units rows and n_output_units columns,
 #'   the sum of every column is 1
+#' @noRd
 init_weight_mtrx <- function(n_input_units, n_output_units,
                              mean = 0.5, sd = 0.005){
   n_weights <- n_output_units * n_input_units
@@ -123,10 +132,14 @@ init_weight_mtrx <- function(n_input_units, n_output_units,
 
 #' Updates weights for competitive learning network algorithm
 #'
+#' Depending on the input and learning rate, this function takes the
+#' weight matrix at step t and returns the weight matrix at step t+1
+#'
 #' @param input input vector
 #' @param weight_matrix weight matrix of network
 #' @param lrate learning rate
 #' @return new weight matrix for step t + 1
+#' @noRd
 updt_winner_weights <- function(input, weight_matrix, lrate){
   output <- weight_matrix %*% input
   winner <- which(output == max(output))
@@ -141,10 +154,16 @@ updt_winner_weights <- function(input, weight_matrix, lrate){
 
 #' Calculates sum of activation in output units for input patterns
 #'
+#' Produces output activations for input patterns, without learning.
+#' This is usually used after the learning procedure is completed and
+#' one wants to know the reaction of the network to specific input
+#' patterns.
+#'
 #' @param inputs matrix of inputs for which to calculate output
 #'   activation
 #' @inheritParams updt_winner_weights
 #' @return sum of activations of output units for input patterns
+#' @noRd
 calc_output_sum <- function(inputs, weight_matrix){
   if (class(inputs) == "matrix") {
     return(colSums(apply(inputs, 1, function(x) weight_matrix %*% x)))
@@ -156,10 +175,16 @@ calc_output_sum <- function(inputs, weight_matrix){
 
 #' Calculates attention (learning rate) development over time
 #'
+#' Depending on differnt learning parameters, this function creates
+#' the development of the learning rate over time. In the framework of
+#' PASS-T, the learning rate can also be seen as the "attention" of
+#' the network.
+#'
 #' @inheritParams run_sim
 #'
 #' @return list of attention values (learning rate) for every time
 #'   pulse for every stimulus
+#' @noRd
 get_attention <- function(duration, lrate_onset, lrate_drop_time,
                           lrate_drop_perc, pulses_per_second = 1){
   duration_pulses <- duration * pulses_per_second
@@ -179,10 +204,13 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
   return(y)
 }
 
-#' Run simulations and analyze data comparable to a typical experiment
+#' Run simulations and analyze data
 #'
-#' Runs several simulations and calculates correlative effect sizes.
-#' Comparable to running an experiment and analyzing the data.
+#' Runs several simulations and returns correlative effect sizes
+#' between the frequency/total duration/single duration of each
+#' pattern and the output activation of the network for each pattern,
+#' respectively. Comparable to running an empirical experiment in
+#' judgments of frequency and duration and analyzing the data.
 #'
 #' @inheritParams run_sim
 #' @param number_of_participants corresponds with number of
@@ -197,6 +225,10 @@ get_attention <- function(duration, lrate_onset, lrate_drop_time,
 #' @examples
 #' run_exp(10:1, 1:10, 0.05, 2, 0.2)
 #' @seealso  \code{\link{run_sim}}
+#' @return data frame with three columns: f_dv, td_dv, t_dv which are
+#'   the correlations between the frequency/total duration/single
+#'   duration of each pattern and the activation of the network for
+#'   each pattern, respectively.
 run_exp <- function(frequency, duration, lrate_onset, lrate_drop_time,
                    lrate_drop_perc, patterns = diag(length(duration)),
                    number_of_participants = 100,

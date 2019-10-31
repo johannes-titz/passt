@@ -2,7 +2,7 @@
 % Please edit documentation in R/passt.R
 \name{run_exp}
 \alias{run_exp}
-\title{Run simulations and analyze data comparable to a typical experiment}
+\title{Run simulations and analyze data}
 \usage{
 run_exp(frequency, duration, lrate_onset, lrate_drop_time, lrate_drop_perc,
   patterns = diag(length(duration)), number_of_participants = 100,
@@ -31,9 +31,18 @@ simulations run}
 \item{cor_noise_sd}{the amount of noise added to the final
 activations of the network, set to 0 if you do not want any noise}
 }
+\value{
+data frame with three columns: f_dv, td_dv, t_dv which are
+  the correlations between the frequency/total duration/single
+  duration of each pattern and the activation of the network for
+  each pattern, respectively.
+}
 \description{
-Runs several simulations and calculates correlative effect sizes.
-Comparable to running an experiment and analyzing the data.
+Runs several simulations and returns correlative effect sizes
+between the frequency/total duration/single duration of each
+pattern and the output activation of the network for each pattern,
+respectively. Comparable to running an empirical experiment in
+judgments of frequency and duration and analyzing the data.
 }
 \examples{
 run_exp(10:1, 1:10, 0.05, 2, 0.2)
