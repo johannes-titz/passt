@@ -226,7 +226,7 @@ johannes at titz.science or johannes.titz at gmail.com
 Contributions of any kind are very welcome\! I will sincerely consider
 every suggestion on how to improve the code, the documentation and the
 presented examples. Even minor things, such as suggestions for better
-wording or improving grammer in any part of the package are considered
+wording or improving grammar in any part of the package are considered
 as valuable contributions.
 
 If you want to make a pull request, please check that you can still

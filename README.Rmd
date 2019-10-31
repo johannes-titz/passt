@@ -107,7 +107,7 @@ https://github.com/johannes-titz/passt/issues
 If you need assistance in how to use the package, drop me an e-mail at johannes at titz.science or johannes.titz at gmail.com
 
 ## Contributing
-Contributions of any kind are very welcome! I will sincerely consider every suggestion on how to improve the code, the documentation and the presented examples. Even minor things, such as suggestions for better wording or improving grammer in any part of the package are considered as valuable contributions.
+Contributions of any kind are very welcome! I will sincerely consider every suggestion on how to improve the code, the documentation and the presented examples. Even minor things, such as suggestions for better wording or improving grammar in any part of the package are considered as valuable contributions.
 
 If you want to make a pull request, please check that you can still build the package without any errors, warnings or notes. Overall, simply stick to the R packages book: https://r-pkgs.org/ and follow the code style described here: http://r-pkgs.had.co.nz/r.html#style
 

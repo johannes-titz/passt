@@ -139,7 +139,7 @@ ggplot(sim4, aes(f_dv, td_dv, color = lrate_drop_perc*100)) +
   scale_y_continuous("Influence of duration", limits = c(-.1, 1))
 ```
 
-Here we can clearly see that the effects of exposure frequency and exposure duration depend on how far the learning parameter drops. Intuitively we could say that if the "attention" of the network reamins high all the time (learning rate remains at 100%), the effect of frequency is weak, while the effect of total duration is strong. But under normal experimental conditions, the assumption is that attention drops substantially soon after the onset of a stimulus [@Titz2018]. Thus, the influence of frequency is very strong, but the influence of total duration is weak. This arrangement is sometimes referred to as *frequency primacy*.
+Here we can clearly see that the effects of exposure frequency and exposure duration depend on how far the learning parameter drops. Intuitively we could say that if the "attention" of the network remains high all the time (learning rate remains at 100%), the effect of frequency is weak, while the effect of total duration is strong. But under normal experimental conditions, the assumption is that attention drops substantially soon after the onset of a stimulus [@Titz2018]. Thus, the influence of frequency is very strong, but the influence of total duration is weak. This arrangement is sometimes referred to as *frequency primacy*.
 
 This was only a very short (if not *too* short) introduction to PASS-T via *passt*. If you are interested in the model, please check out our publications: @Titz2019 and @Titz2018. Any and all feedback is welcome; just drop me an e-mail at johannes.titz at gmail.com or file an issue at github: https://github.com/johannes-titz/passt/issues
 
