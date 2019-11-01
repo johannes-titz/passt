@@ -9,12 +9,13 @@ This is a resubmission. In this version I have:
 ## Test environments
 * local Arch GNU/Linux install, R 3.6.1
 * ubuntu 16.04 (on travis-ci), R 3.6.1
-* win-builder (devel and release)
+* win-builder (release -- devel seems to be down, I get the following error: "ERROR: Access to the path 'C:\Inetpub\ftproot\R-devel\passt_0.1.0.tar.gz' is denied." -- but release works fine)
+* Windows Server (r-hub builder), R devel
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was 1 NOTE on win-builder devel and release:
+There was 1 NOTE on win-builder release and Windows Server devel:
 
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Johannes Titz <johannes.titz@gmail.com>'
