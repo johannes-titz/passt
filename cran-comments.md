@@ -1,6 +1,7 @@
-##Resubmission
+## Resubmission
 This is a resubmission. In this version I have:
 
+* removed the redundant "An Implementation of" from the title
 * added more details in the Description field about the package and the background of the PASS-T model, so that it is more clear why the package is useful
 * added references for the PASS-T model and empirical studies related to it in the Description field
 * added \value to the run_exp.Rd file and explained the function's results (note that in the first submission several helper functions were exported which are not needed by the end-user; these are now internal functions and thus the documentation was also removed for them)
