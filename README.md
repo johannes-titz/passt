@@ -206,11 +206,14 @@ activation is strong, while the influence of frequency (*f\_dv*) is
 weak. But if the learning rate drops substantially
 (i.e. *lrate\_drop\_perc* approaches 0), the opposite is true.
 
-For more details please check out the vignette:
+For more details please check out the vignette in R:
 
 ``` r
 vignette("passt")
 ```
+
+Or on CRAN:
+<https://cran.r-project.org/web/packages/passt/vignettes/passt.html>
 
 ## Issues and Support
 

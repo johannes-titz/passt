@@ -94,11 +94,13 @@ sim4
 
 If the learning rate does not drop much (i.e. *lrate_drop_perc* approaches 1), the influence of total duration (*td_dv*) on the output activation is strong, while the influence of frequency (*f_dv*) is weak. But if the learning rate drops substantially (i.e. *lrate_drop_perc* approaches 0), the opposite is true. 
 
-For more details please check out the vignette:
+For more details please check out the vignette in R:
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, eval=FALSE}
 vignette("passt")
 ```
+
+Or on CRAN: https://cran.r-project.org/web/packages/passt/vignettes/passt.html
 
 ## Issues and Support
 If you find any bugs, please use the issue tracker at:
