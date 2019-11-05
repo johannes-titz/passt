@@ -9,6 +9,8 @@
 Status](https://travis-ci.org/johannes-titz/passt.svg?branch=master)](https://travis-ci.org/johannes-titz/passt)
 [![Codecov test
 coverage](https://codecov.io/gh/johannes-titz/passt/branch/master/graph/badge.svg)](https://codecov.io/gh/johannes-titz/passt?branch=master)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/passt)](https://CRAN.R-project.org/package=passt)
 <!-- badges: end -->
 
 The *passt* package is an R implementation of the Probability ASSociator
@@ -53,14 +55,12 @@ the model available to a wider audience.
 
 ## Installation
 
-<!-- 
-You can install the released version of passt from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of passt from
+[CRAN](https://CRAN.R-project.org) with:
 
-
-```r
-#install.packages("passt")
+``` r
+install.packages("passt")
 ```
--->
 
 You can install the development version from
 [GitHub](https://github.com/) with devtools (and vignettes build, this
