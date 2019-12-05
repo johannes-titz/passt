@@ -165,7 +165,7 @@ updt_winner_weights <- function(input, weight_matrix, lrate){
 #' @return sum of activations of output units for input patterns
 #' @noRd
 calc_output_sum <- function(inputs, weight_matrix){
-  if (class(inputs) == "matrix") {
+  if (class(inputs)[1] == "matrix") {
     return(colSums(apply(inputs, 1, function(x) weight_matrix %*% x)))
   }
   if (is.vector(inputs) == TRUE) {
