@@ -1,27 +1,16 @@
-## Resubmission
-This is a resubmission. In this version I have:
+# Patch for R devel
 
-* removed the redundant "An Implementation of" from the title
-* added more details in the Description field about the package and the background of the PASS-T model, so that it is more clear why the package is useful
-* added references for the PASS-T model and empirical studies related to it in the Description field
-* added \value to the run_exp.Rd file and explained the function's results (note that in the first submission several helper functions were exported which are not needed by the end-user; these are now internal functions and thus the documentation was also removed for them)
-* removed the print command in the function updt_winner_weights (it is now a warning)
+This is a submission to fix a problem that occurs in my package due to how class
+now works in the development version of R. I received an e-mail by Kurt Hornik
+to fix the problem in my package. I now use methods::is instead of class.
 
 ## Test environments
 * local Arch GNU/Linux install, R 3.6.1
-* ubuntu 16.04 (on travis-ci), R 3.6.1
-* win-builder (release -- devel seems to be down, I get the following error: "ERROR: Access to the path 'C:\Inetpub\ftproot\R-devel\passt_0.1.0.tar.gz' is denied." -- but release works fine)
-* Windows Server (r-hub builder), R devel
+* ubuntu 16.04 (on travis-ci), R 3.6.1, devel
+* win-builder (release, devel)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs.
-
-There was 1 NOTE on win-builder release and Windows Server devel:
-
-* checking CRAN incoming feasibility ... NOTE
-  Maintainer: 'Johannes Titz <johannes.titz@gmail.com>'
-
-  As I understand it this is just a reminder for CRAN maintainers.
+There were no ERRORs, WARNINGs or NOTES.
   
 ## Downstream dependencies
 There are no downstream dependencies
