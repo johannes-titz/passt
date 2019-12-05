@@ -1,7 +1,7 @@
 Package: passt
 Type: Package
 Title: Probability Associator Time (PASS-T)
-Version: 0.1.9000
+Version: 0.1.1
 Authors@R: person("Johannes", "Titz",
                   email = "johannes.titz@gmail.com",
                   role = c("aut", "cre"))
