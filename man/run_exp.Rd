@@ -4,9 +4,16 @@
 \alias{run_exp}
 \title{Run simulations and analyze data}
 \usage{
-run_exp(frequency, duration, lrate_onset, lrate_drop_time, lrate_drop_perc,
-  patterns = diag(length(duration)), number_of_participants = 100,
-  cor_noise_sd = 0)
+run_exp(
+  frequency,
+  duration,
+  lrate_onset,
+  lrate_drop_time,
+  lrate_drop_perc,
+  patterns = diag(length(duration)),
+  number_of_participants = 100,
+  cor_noise_sd = 0
+)
 }
 \arguments{
 \item{frequency}{presentation frequency for each pattern in the

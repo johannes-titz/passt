@@ -4,9 +4,17 @@
 \alias{run_sim}
 \title{Run simulations}
 \usage{
-run_sim(patterns, frequency, duration, lrate_onset, lrate_drop_time,
-  lrate_drop_perc, n_runs = 100, n_output_units = ncol(patterns),
-  pulses_per_second = 1)
+run_sim(
+  patterns,
+  frequency,
+  duration,
+  lrate_onset,
+  lrate_drop_time,
+  lrate_drop_perc,
+  n_runs = 100,
+  n_output_units = ncol(patterns),
+  pulses_per_second = 1
+)
 }
 \arguments{
 \item{patterns}{matrix with input patterns, one row is one pattern}
