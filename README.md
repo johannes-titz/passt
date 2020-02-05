@@ -123,20 +123,13 @@ look at the first couple of simulations:
 
 ``` r
 head(sim1$output)
-#>           [,1]      [,2]      [,3]      [,4]      [,5]     [,6]     [,7]
-#> [1,] 0.8134030 0.8623727 0.9090286 0.9526607 0.9893114 1.027876 1.065307
-#> [2,] 0.8161057 0.8618859 0.9028135 0.9479106 0.9905695 1.024340 1.062587
-#> [3,] 0.8117953 0.8602871 0.9049667 0.9490695 0.9895403 1.027940 1.061659
-#> [4,] 0.8148240 0.8633805 0.9009140 0.9490142 0.9884823 1.026991 1.061192
-#> [5,] 0.8114915 0.8611520 0.9011725 0.9449056 0.9886680 1.027973 1.067783
-#> [6,] 0.8177491 0.8598771 0.9061970 0.9493045 0.9831946 1.031035 1.059464
-#>          [,8]     [,9]    [,10]
-#> [1,] 1.093939 1.125975 1.160127
-#> [2,] 1.098260 1.132112 1.163416
-#> [3,] 1.097431 1.134466 1.162845
-#> [4,] 1.100671 1.128499 1.166032
-#> [5,] 1.103455 1.132242 1.161158
-#> [6,] 1.102026 1.132638 1.158515
+#>           [,1]      [,2]      [,3]      [,4]      [,5]     [,6]     [,7]     [,8]     [,9]    [,10]
+#> [1,] 0.8134030 0.8623727 0.9090286 0.9526607 0.9893114 1.027876 1.065307 1.093939 1.125975 1.160127
+#> [2,] 0.8161057 0.8618859 0.9028135 0.9479106 0.9905695 1.024340 1.062587 1.098260 1.132112 1.163416
+#> [3,] 0.8117953 0.8602871 0.9049667 0.9490695 0.9895403 1.027940 1.061659 1.097431 1.134466 1.162845
+#> [4,] 0.8148240 0.8633805 0.9009140 0.9490142 0.9884823 1.026991 1.061192 1.100671 1.128499 1.166032
+#> [5,] 0.8114915 0.8611520 0.9011725 0.9449056 0.9886680 1.027973 1.067783 1.103455 1.132242 1.161158
+#> [6,] 0.8177491 0.8598771 0.9061970 0.9493045 0.9831946 1.031035 1.059464 1.102026 1.132638 1.158515
 ```
 
 The *output* gives the sum of the activity of all output units for the
@@ -279,8 +272,8 @@ memory. *Journal of Experimental Psychology*, *83*, 435–444.
 
 Hintzman, D. L., Summers, J. J., & Block, R. A. (1975). What causes the
 spacing effect? Some effects of repetition, duration, and spacing on
-memory for pictures. *Memory & Cognition*, *3*, 287–294. Retrieved from
-<https://link.springer.com/article/10.3758/BF03212913>
+memory for pictures. *Memory & Cognition*, *3*, 287–294.
+<https://doi.org/10.3758/BF03212913>
 
 </div>
 
@@ -288,6 +281,7 @@ memory for pictures. *Memory & Cognition*, *3*, 287–294. Retrieved from
 
 Sedlmeier, P. (1999). *Improving statistical reasoning: Theoretical
 models and practical implications*. Mawah, NJ: Erlbaum.
+<https://doi.org/10.4324/9781410601247>
 
 </div>
 
@@ -296,6 +290,7 @@ models and practical implications*. Mawah, NJ: Erlbaum.
 Sedlmeier, P. (2002). Associative learning and frequency judgments: The
 PASS model. In P. Sedlmeier & T. Betsch (Eds.), *Frequency processing
 and cognition* (pp. 137–152). Oxford, England: Oxford University Press.
+<https://doi.org/10.1093/acprof:oso/9780198508632.003.0009>
 
 </div>
 
