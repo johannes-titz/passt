@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/johannes-titz/passt.svg?branch=master)](https://travis-ci.org/johannes-titz/passt)
 [![Codecov test coverage](https://codecov.io/gh/johannes-titz/passt/branch/master/graph/badge.svg)](https://codecov.io/gh/johannes-titz/passt?branch=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/passt)](https://CRAN.R-project.org/package=passt)
+[![status](https://joss.theoj.org/papers/17dd34a44194e85822195179079e606c/status.svg)](https://joss.theoj.org/papers/17dd34a44194e85822195179079e606c)
 <!-- badges: end -->
 
 The *passt* package is an R implementation of the Probability ASSociator Time (PASS-T) model, an artificial neural network designed to explain how humans make judgments of frequency and duration [@Titz2019]. The package was developed with two purposes in mind: (1) to provide a simple way to reproduce simulation results in judgments of frequency and duration as described in @Titz2019, and (2) to explore the PASS-T model by allowing users to run their own individual simulations. The package is targeted at cognitive psychologists who study judgments of frequency and duration, memory, heuristics and artificial neural networks.

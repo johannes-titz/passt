@@ -11,6 +11,7 @@ Status](https://travis-ci.org/johannes-titz/passt.svg?branch=master)](https://tr
 coverage](https://codecov.io/gh/johannes-titz/passt/branch/master/graph/badge.svg)](https://codecov.io/gh/johannes-titz/passt?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/passt)](https://CRAN.R-project.org/package=passt)
+[![status](https://joss.theoj.org/papers/17dd34a44194e85822195179079e606c/status.svg)](https://joss.theoj.org/papers/17dd34a44194e85822195179079e606c)
 <!-- badges: end -->
 
 The *passt* package is an R implementation of the Probability ASSociator
