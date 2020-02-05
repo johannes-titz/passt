@@ -319,7 +319,7 @@ publication.
 
 Winkler, I. (2009). *The processing of frequency and duration* (Doctoral
 dissertation, Chemnitz University of Technology). Retrieved from
-<http://monarch.qucosa.de/api/qucosa%3A19139/attachment/ATT-0/>
+<https://nbn-resolving.org/urn:nbn:de:bsz:ch1-200900917>
 
 </div>
 
