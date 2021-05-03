@@ -18,7 +18,6 @@ Description: Simulates judgments of frequency and duration based on
     human judgments of frequency and duration.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.0.2
 URL: https://github.com/johannes-titz/passt
 BugReports: https://github.com/johannes-titz/passt/issues
