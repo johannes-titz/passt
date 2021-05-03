@@ -1,11 +1,11 @@
-# Patch for R devel
+# Patch for current version of knitr
 
-This is a submission to fix a problem that occurs in my package due to how class
-now works in the development version of R. I received an e-mail by Kurt Hornik
-to fix the problem in my package. I now use methods::is instead of class.
+This is a submission to fix a problem that occurs in my package due to a change
+in the knitr package. I received an e-mail by Kurt Hornik to fix the problem in
+my package. I added rmarkdown to the suggests field.
 
 ## Test environments
-* local Arch GNU/Linux install, R 3.6.1
+* local Arch GNU/Linux install, R 4.0.5
 * ubuntu 16.04 (on travis-ci), R 3.6.1, devel
 * win-builder (release, devel)
 

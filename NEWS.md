@@ -1,4 +1,6 @@
-#
+# passt 0.1.3
+
+* add rmarkdown to suggests field
 
 # passt 0.1.2
 
